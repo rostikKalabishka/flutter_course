@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'lesson-28-ui/ui_layout_basics.dart';
+import 'package:flutter_course/lesson-45-form/router/router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const WeatherForeCast(),
+      routes: route,
     );
   }
 }
