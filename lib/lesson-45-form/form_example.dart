@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'model/used.dart';
+
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
 
@@ -12,6 +14,7 @@ class _FormScreenState extends State<FormScreen> {
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
+  final countryController = TextEditingController();
   final lifeStoryController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -233,11 +236,49 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 
+  void _showDialog(User user) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('${user.name} is now a verified register form'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/info', arguments: user);
+                    // Navigator.of(context).pop();
+                  },
+                  child: const Text('Verified'))
+            ],
+            title: const Text('Registration successful'),
+          );
+        });
+  }
+
+  showMessage({required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.deepPurple,
+      content: Center(
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    ));
+  }
+
   void toNextPage(
       BuildContext context, TextEditingController fullNameController) {
+    User user = User(
+        story: lifeStoryController.text,
+        name: fullNameController.text,
+        phoneNumber: phoneNumberController.text,
+        email: emailController.text,
+        country: countryController.text);
     if (_formKey.currentState!.validate()) {
-      final text = fullNameController.text;
-      Navigator.of(context).pushNamed('/info', arguments: text);
+      _showDialog(user);
+    } else {
+      showMessage(message: 'Form invalid');
     }
   }
 
