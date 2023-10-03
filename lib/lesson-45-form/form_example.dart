@@ -16,6 +16,12 @@ class _FormScreenState extends State<FormScreen> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  final fullNameFocus = FocusNode();
+  final phoneNumberFocus = FocusNode();
+  final emailFocus = FocusNode();
+
+  final passwordFocus = FocusNode();
+
   @override
   void dispose() {
     fullNameController.dispose();
@@ -24,7 +30,20 @@ class _FormScreenState extends State<FormScreen> {
     lifeStoryController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+
+    fullNameFocus.dispose();
+    phoneNumberFocus.dispose();
+    emailFocus.dispose();
+
+    passwordFocus.dispose();
+
     super.dispose();
+  }
+
+  void nextFocus(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -32,6 +51,8 @@ class _FormScreenState extends State<FormScreen> {
   bool isObscurePassword = true;
   bool isObscureConfirmPassword = true;
 
+  List<String> country = ['Ukraine', 'Moldova', 'UK', 'USA'];
+  String? _selectedCountry;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +73,10 @@ class _FormScreenState extends State<FormScreen> {
               child: Column(
                 children: [
                   TextFormField(
+                    focusNode: fullNameFocus,
+                    autofocus: true,
+                    onFieldSubmitted: (_) =>
+                        nextFocus(context, fullNameFocus, phoneNumberFocus),
                     validator: (value) => validateName(value!),
                     controller: fullNameController,
                     keyboardType: TextInputType.name,
@@ -73,6 +98,11 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      focusNode: phoneNumberFocus,
+                      autofocus: true,
+                      onFieldSubmitted: (_) =>
+                          nextFocus(context, fullNameFocus, emailFocus),
+                      validator: (value) => validatePhone(value!),
                       controller: phoneNumberController,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
@@ -91,13 +121,37 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      autofocus: true,
+                      focusNode: emailFocus,
+                      onFieldSubmitted: (_) =>
+                          nextFocus(context, emailFocus, passwordFocus),
                       controller: emailController,
                       validator: (value) => validateEmail(value!),
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Email Address',
                           prefixIcon: Icon(Icons.mail))),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    items: country.map((country) {
+                      return DropdownMenuItem(
+                        value: country,
+                        child: Text(country),
+                      );
+                    }).toList(),
+                    onChanged: (data) {
+                      setState(() {
+                        _selectedCountry = data;
+                      });
+                    },
+                    value: _selectedCountry,
+                  ),
                   const SizedBox(
                     height: 15,
                   ),
@@ -112,6 +166,8 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      autofocus: true,
+                      focusNode: passwordFocus,
                       controller: passwordController,
                       validator: (value) => passwordValidate(value!),
                       obscureText: isObscurePassword,
@@ -201,6 +257,14 @@ class _FormScreenState extends State<FormScreen> {
       return 'email required';
     } else if (!emailController.text.contains('@')) {
       return 'it`s not email';
+    } else {
+      return null;
+    }
+  }
+
+  String? validatePhone(String value) {
+    if (value.isEmpty) {
+      return 'phone number is required';
     } else {
       return null;
     }
