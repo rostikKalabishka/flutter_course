@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'model/used.dart';
+
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
 
@@ -12,9 +14,16 @@ class _FormScreenState extends State<FormScreen> {
   final fullNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
+  final countryController = TextEditingController();
   final lifeStoryController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  final fullNameFocus = FocusNode();
+  final phoneNumberFocus = FocusNode();
+  final emailFocus = FocusNode();
+
+  final passwordFocus = FocusNode();
 
   @override
   void dispose() {
@@ -24,7 +33,20 @@ class _FormScreenState extends State<FormScreen> {
     lifeStoryController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+
+    fullNameFocus.dispose();
+    phoneNumberFocus.dispose();
+    emailFocus.dispose();
+
+    passwordFocus.dispose();
+
     super.dispose();
+  }
+
+  void nextFocus(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -32,6 +54,8 @@ class _FormScreenState extends State<FormScreen> {
   bool isObscurePassword = true;
   bool isObscureConfirmPassword = true;
 
+  List<String> country = ['Ukraine', 'Moldova', 'UK', 'USA'];
+  String? _selectedCountry;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +76,10 @@ class _FormScreenState extends State<FormScreen> {
               child: Column(
                 children: [
                   TextFormField(
+                    focusNode: fullNameFocus,
+                    autofocus: true,
+                    onFieldSubmitted: (_) =>
+                        nextFocus(context, fullNameFocus, phoneNumberFocus),
                     validator: (value) => validateName(value!),
                     controller: fullNameController,
                     keyboardType: TextInputType.name,
@@ -73,6 +101,11 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      focusNode: phoneNumberFocus,
+                      autofocus: true,
+                      onFieldSubmitted: (_) =>
+                          nextFocus(context, fullNameFocus, emailFocus),
+                      validator: (value) => validatePhone(value!),
                       controller: phoneNumberController,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
@@ -91,17 +124,42 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      autofocus: true,
+                      focusNode: emailFocus,
+                      onFieldSubmitted: (_) =>
+                          nextFocus(context, emailFocus, passwordFocus),
                       controller: emailController,
                       validator: (value) => validateEmail(value!),
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Email Address',
                           prefixIcon: Icon(Icons.mail))),
                   const SizedBox(
                     height: 15,
                   ),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    items: country.map((country) {
+                      return DropdownMenuItem(
+                        value: country,
+                        child: Text(country),
+                      );
+                    }).toList(),
+                    onChanged: (data) {
+                      setState(() {
+                        _selectedCountry = data ?? '';
+                      });
+                    },
+                    value: _selectedCountry,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   TextFormField(
+                      controller: lifeStoryController,
                       inputFormatters: [LengthLimitingTextInputFormatter(100)],
                       maxLines: 5,
                       decoration: const InputDecoration(
@@ -112,6 +170,8 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      autofocus: true,
+                      focusNode: passwordFocus,
                       controller: passwordController,
                       validator: (value) => passwordValidate(value!),
                       obscureText: isObscurePassword,
@@ -161,7 +221,7 @@ class _FormScreenState extends State<FormScreen> {
                             borderRadius: BorderRadius.circular(5.0)),
                         primary: Colors.deepPurple),
                     onPressed: () {
-                      toNextPage(context, fullNameController);
+                      toNextPage(context);
                     },
                     child: const Text(
                       'Submit form',
@@ -177,11 +237,50 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 
+  void _showDialog(User user) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('${user.name} is now a verified register form'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/info', arguments: user);
+                    // Navigator.of(context).pop();
+                  },
+                  child: const Text('Verified'))
+            ],
+            title: const Text('Registration successful'),
+          );
+        });
+  }
+
+  showMessage({required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.deepPurple,
+      content: Center(
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    ));
+  }
+
   void toNextPage(
-      BuildContext context, TextEditingController fullNameController) {
+    BuildContext context,
+  ) {
+    User user = User(
+        story: lifeStoryController.text.trim(),
+        name: fullNameController.text,
+        phoneNumber: phoneNumberController.text,
+        email: emailController.text,
+        country: _selectedCountry ?? ''.trim());
     if (_formKey.currentState!.validate()) {
-      final text = fullNameController.text;
-      Navigator.of(context).pushNamed('/info', arguments: text);
+      _showDialog(user);
+    } else {
+      showMessage(message: 'Form invalid');
     }
   }
 
@@ -197,10 +296,21 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   String? validateEmail(String value) {
+    // if (!emailController.text.contains('@')) {
+    //   return 'it`s not email';
+    // }
+    // if (value.isEmpty) {
+    //   return 'email required';
+    // } else if (!emailController.text.contains('@')) {
+    //   return 'it`s not email';
+    // } else {
+    //   return null;
+    // }
+  }
+
+  String? validatePhone(String value) {
     if (value.isEmpty) {
-      return 'email required';
-    } else if (!emailController.text.contains('@')) {
-      return 'it`s not email';
+      return 'phone number is required';
     } else {
       return null;
     }
