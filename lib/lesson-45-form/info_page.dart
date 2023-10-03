@@ -11,20 +11,35 @@ class InfoPage extends StatelessWidget {
     user = args as User;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.deepPurple,
-        title: Text(
-          '${user.name}',
-          style: const TextStyle(color: Colors.white),
+        title: const Text(
+          'User Info',
+          style: TextStyle(color: Colors.white),
         ),
       ),
       body: Column(children: [
         ListTile(
-          title: Text('${user.name}'),
-          subtitle: Text('bbbbb'),
+          title: Text(user.name),
+          subtitle: user.story.isEmpty && user.story == null && user.story == ""
+              ? null
+              : Text(user.story),
           leading: const Icon(Icons.person),
-          trailing: Text('${user.country}'),
-        )
+          trailing: user.country != null
+              ? Text(user.country)
+              : const SizedBox.shrink(),
+        ),
+        ListTile(
+          title: Text(user.phoneNumber),
+          leading: const Icon(Icons.call),
+        ),
+        user.email.isNotEmpty || user.email != null
+            ? ListTile(
+                title: Text(user.email),
+                leading: user.email.isEmpty ? null : const Icon(Icons.mail),
+              )
+            : const SizedBox.shrink(),
       ]),
     );
   }

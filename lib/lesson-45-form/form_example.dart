@@ -150,7 +150,7 @@ class _FormScreenState extends State<FormScreen> {
                     }).toList(),
                     onChanged: (data) {
                       setState(() {
-                        _selectedCountry = data;
+                        _selectedCountry = data ?? '';
                       });
                     },
                     value: _selectedCountry,
@@ -159,6 +159,7 @@ class _FormScreenState extends State<FormScreen> {
                     height: 15,
                   ),
                   TextFormField(
+                      controller: lifeStoryController,
                       inputFormatters: [LengthLimitingTextInputFormatter(100)],
                       maxLines: 5,
                       decoration: const InputDecoration(
@@ -220,7 +221,7 @@ class _FormScreenState extends State<FormScreen> {
                             borderRadius: BorderRadius.circular(5.0)),
                         primary: Colors.deepPurple),
                     onPressed: () {
-                      toNextPage(context, fullNameController);
+                      toNextPage(context);
                     },
                     child: const Text(
                       'Submit form',
@@ -268,13 +269,14 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   void toNextPage(
-      BuildContext context, TextEditingController fullNameController) {
+    BuildContext context,
+  ) {
     User user = User(
-        story: lifeStoryController.text,
+        story: lifeStoryController.text.trim(),
         name: fullNameController.text,
         phoneNumber: phoneNumberController.text,
         email: emailController.text,
-        country: countryController.text);
+        country: _selectedCountry ?? ''.trim());
     if (_formKey.currentState!.validate()) {
       _showDialog(user);
     } else {
@@ -294,13 +296,16 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   String? validateEmail(String value) {
-    if (value.isEmpty) {
-      return 'email required';
-    } else if (!emailController.text.contains('@')) {
-      return 'it`s not email';
-    } else {
-      return null;
-    }
+    // if (!emailController.text.contains('@')) {
+    //   return 'it`s not email';
+    // }
+    // if (value.isEmpty) {
+    //   return 'email required';
+    // } else if (!emailController.text.contains('@')) {
+    //   return 'it`s not email';
+    // } else {
+    //   return null;
+    // }
   }
 
   String? validatePhone(String value) {
