@@ -1,7 +1,6 @@
-import 'dart:developer';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import 'entity/offices.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyWidget(),
+      home: const MyWidget(),
     );
   }
 }
@@ -34,7 +33,7 @@ class MyWidget extends StatefulWidget {
 class _MyWidgetState extends State<MyWidget> {
   @override
   void initState() {
-    loadData();
+    getData();
     super.initState();
   }
 
@@ -50,35 +49,44 @@ class _MyWidgetState extends State<MyWidget> {
         ),
       ),
       body: SafeArea(
-          child: Column(
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                loadData();
+          child: FutureBuilder<OfficesList>(
+        future: getData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                final image = snapshot.data!.officesList[index].image;
+                final name = snapshot.data!.officesList[index].name;
+                final address = snapshot.data!.officesList[index].address;
+                return Column(
+                  children: [
+                    Card(
+                      child: ListTile(
+                        title: Text(name),
+                        leading: Image.network(image),
+                        subtitle: Text(address),
+                      ),
+                    )
+                    //Image.network(image), Text(name), Text(address)
+                  ],
+                );
               },
-              child: Text('Get Data'))
-        ],
+              itemCount: snapshot.data!.officesList.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(
+                  color: Colors.green,
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       )),
     );
   }
-}
-
-Future<Response> getData() async {
-  final Dio dio = Dio();
-  const url = 'https://about.google/static/data/locations.json';
-  final response = await dio.get(url);
-
-  return response;
-}
-
-void loadData() {
-  getData().then((response) {
-    if (response.statusCode == 200) {
-      print(response);
-    } else {
-      print(response.statusCode);
-    }
-  }).catchError((onError) {
-    debugPrint(onError.toString());
-  });
 }
