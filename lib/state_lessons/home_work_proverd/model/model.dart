@@ -9,6 +9,7 @@ class HomeWorkProviderModel extends ChangeNotifier {
   Color get color => _color;
   Color _colorAppBar = Color.fromARGB(255, 255, 255, 255);
   Color get colorAppBar => _colorAppBar;
+
   void randomColors() {
     var formR = (Random().nextDouble() * 255).toInt();
     var formG = (Random().nextDouble() * 255).toInt();
