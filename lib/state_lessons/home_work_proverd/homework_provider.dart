@@ -3,9 +3,15 @@ import 'package:provider/provider.dart';
 
 import 'model/model.dart';
 
-class HomeWorkProvider extends StatelessWidget {
+class HomeWorkProvider extends StatefulWidget {
   const HomeWorkProvider({super.key});
 
+  @override
+  State<HomeWorkProvider> createState() => _HomeWorkProviderState();
+}
+
+class _HomeWorkProviderState extends State<HomeWorkProvider> {
+  bool biba = true;
   @override
   Widget build(BuildContext context) {
     final model = context.watch<HomeWorkProviderModel>();
@@ -15,22 +21,22 @@ class HomeWorkProvider extends StatelessWidget {
           backgroundColor: Colors.black,
           title: Text(
             'Homework Provider',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: model.colorAppBar),
           )),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
-              width: 100,
-              height: 100,
-              color: Colors.amber,
+              width: 200,
+              height: 200,
+              color: model.color,
               duration: const Duration(seconds: 3),
             ),
             Switch(
               value: model.light,
               onChanged: (bool value) {
-                model.light = value;
+                model.lightB();
               },
               activeColor: Colors.green,
             )
