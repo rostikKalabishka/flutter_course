@@ -1,17 +1,25 @@
 import 'package:dio/dio.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'offices.g.dart';
 
+@JsonSerializable()
 class OfficesList {
+  @JsonKey(name: 'offices')
   final List<Office> officesList;
   OfficesList({required this.officesList});
 
-  factory OfficesList.fromJson(Map<String, dynamic> json) {
-    return OfficesList(
-        officesList: (json['offices'] as List<dynamic>)
-            .map((e) => Office.fromJson(e))
-            .toList());
-  }
+  // factory OfficesList.fromJson(Map<String, dynamic> json) {
+  //   return OfficesList(
+  //       officesList: (json['offices'] as List<dynamic>)
+  //           .map((e) => Office.fromJson(e))
+  //           .toList());
+  // }
+  factory OfficesList.fromJson(Map<String, dynamic> json) =>
+      _$OfficesListFromJson(json);
+  Map<String, dynamic> toJson() => _$OfficesListToJson(this);
 }
 
+@JsonSerializable()
 class Office {
   final String name;
   final String image;
@@ -19,15 +27,18 @@ class Office {
 
   Office({required this.name, required this.image, required this.address});
 
-  factory Office.fromJson(Map<String, dynamic> json) {
-    return Office(
-        address: json['address'] as String,
-        image: json['image'] as String,
-        name: json['name'] as String);
-  }
+  factory Office.fromJson(Map<String, dynamic> json) => _$OfficeFromJson(json);
+  Map<String, dynamic> toJson() => _$OfficeToJson(this);
+
+  // factory Office.fromJson(Map<String, dynamic> json) {
+  //   return Office(
+  //       address: json['address'] as String,
+  //       image: json['image'] as String,
+  //       name: json['name'] as String);
+  // }
 
   // Map<String, dynamic> toJson() {
-  //   return Office();
+  //   return {"address": address, 'image': image, 'name': num};
   // }
 }
 
