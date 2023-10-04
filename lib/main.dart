@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/state_lessons/home_work_proverd/homework_provider.dart';
+import 'package:flutter_course/state_lessons/home_work_proverd/model/model.dart';
+import 'package:provider/provider.dart';
 
 import 'entity/offices.dart';
 
@@ -18,7 +21,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyWidget(),
+      home: ChangeNotifierProvider(
+        child: const HomeWorkProvider(),
+        create: (_) => HomeWorkProviderModel(),
+      ),
     );
   }
 }
@@ -71,7 +77,7 @@ class _MyWidgetState extends State<MyWidget> {
                   ],
                 );
               },
-              itemCount: snapshot.data!.officesList.length,
+              itemCount: snapshot.data?.officesList.length ?? 0,
               separatorBuilder: (BuildContext context, int index) {
                 return const Divider(
                   color: Colors.green,
