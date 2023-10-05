@@ -38,10 +38,12 @@ class _ReadWriteFileExampleState extends State<ReadWriteFileExample> {
   String _localFilePath = localFileName;
   @override
   void initState() {
-    this._readTextFromLocalFile();
     super.initState();
-    setState(() {});
-    this._getLocalFile.then((file) => this._localFilePath = file.path);
+    this._readTextFromLocalFile();
+
+    this._getLocalFile.then((file) => setState(() {
+          this._localFilePath = file.path;
+        }));
   }
 
   @override
@@ -68,7 +70,7 @@ class _ReadWriteFileExampleState extends State<ReadWriteFileExample> {
               TextButton(
                 onPressed: () async {
                   this._readTextFromLocalFile();
-                  this.textController.text = _localFileContetn;
+                  this.textController.text = this._localFileContetn;
                 },
                 child: const Text('Load'),
               ),
