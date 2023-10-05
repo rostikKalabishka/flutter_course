@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_course/state_lessons/home_work_proverd/homework_provider.dart';
-import 'package:flutter_course/state_lessons/home_work_proverd/model/model.dart';
-import 'package:provider/provider.dart';
+import 'dart:io';
 
-import 'entity/offices.dart';
+import 'package:flutter/material.dart';
+
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,84 +14,115 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: ChangeNotifierProvider(
-        child: const HomeWorkProvider(),
-        create: (_) => HomeWorkProviderModel(),
-      ),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: ReadWriteFileExample());
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class ReadWriteFileExample extends StatefulWidget {
+  ReadWriteFileExample({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<ReadWriteFileExample> createState() => _ReadWriteFileExampleState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _ReadWriteFileExampleState extends State<ReadWriteFileExample> {
+  final textController = TextEditingController();
+  static const String localFileName = 'demon_hitler.txt';
+  String _localFileContetn = '';
+  String _localFilePath = localFileName;
   @override
   void initState() {
-    getData();
+    this._readTextFromLocalFile();
     super.initState();
+    setState(() {});
+    this._getLocalFile.then((file) => this._localFilePath = file.path);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
         title: const Text(
-          'Networking',
+          'Local file read/write Demo',
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: SafeArea(
-          child: FutureBuilder<OfficesList>(
-        future: getData(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.separated(
-              itemBuilder: (BuildContext context, int index) {
-                final image = snapshot.data!.officesList[index].image;
-                final name = snapshot.data!.officesList[index].name;
-                final address = snapshot.data!.officesList[index].address;
-                return Column(
-                  children: [
-                    Card(
-                      child: ListTile(
-                        title: Text(name),
-                        leading: Image.network(image),
-                        subtitle: Text(address),
-                      ),
-                    )
-                    //Image.network(image), Text(name), Text(address)
-                  ],
-                );
-              },
-              itemCount: snapshot.data?.officesList.length ?? 0,
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  color: Colors.green,
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      )),
+        child: Column(
+          children: [
+            const Text('Write to local file'),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
+                controller: textController,
+              ),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              TextButton(
+                onPressed: () async {
+                  this._readTextFromLocalFile();
+                  this.textController.text = _localFileContetn;
+                },
+                child: const Text('Load'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  this._writeTextToLocalFile(textController.text);
+                  textController.clear();
+                  this._readTextFromLocalFile();
+                },
+                child: const Text('Save'),
+              ),
+              const Divider(),
+            ]),
+            Text(
+              'Local file path:',
+              style: TextStyle(fontSize: 32),
+            ),
+            Text('$_localFilePath'),
+            Text(
+              'Local file content',
+              style: TextStyle(fontSize: 32),
+            ),
+            Text('$_localFileContetn'),
+          ],
+        ),
+      ),
     );
+  }
+
+  Future<String> get _getLocalPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  Future<File> get _getLocalFile async {
+    final path = _getLocalPath;
+    return File('$path/$localFileName');
+  }
+
+  Future<File> _writeTextToLocalFile(String text) async {
+    final file = await _getLocalFile;
+    return file.writeAsString(text);
+  }
+
+  Future _readTextFromLocalFile() async {
+    String content;
+    try {
+      final file = await _getLocalFile;
+      content = await file.readAsString();
+    } catch (e) {
+      content = '$e';
+    }
+    setState(() {
+      _localFileContetn = content;
+    });
   }
 }
