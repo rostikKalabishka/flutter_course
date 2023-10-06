@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path_provider/path_provider.dart';
@@ -17,15 +17,111 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: ReadWriteFileExample());
+        home: const SharedPreferenceExample());
+  }
+}
+
+//SharedPreference
+class SharedPreferenceExample extends StatefulWidget {
+  const SharedPreferenceExample({super.key});
+
+  @override
+  State<SharedPreferenceExample> createState() =>
+      _SharedPreferenceExampleState();
+}
+
+class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
+  static const String numberPref = 'number_pref';
+  static const String boolPref = 'bool_pref';
+
+  int _numberPref = 0;
+  bool _booleanPref = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Number Preference'),
+                Text('$_numberPref'),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _setNumberPref(_numberPref++);
+                    });
+                  },
+                  child: const Text('Increment'),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Boolean Preference'),
+                Text((_booleanPref).toString().toUpperCase()),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _setBoolPref(_booleanPref);
+                      _booleanPref = !_booleanPref;
+                    });
+                  },
+                  child: const Text('Toggle'),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Reset'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future _setNumberPref(int value) async {
+    SharedPreferences _preference = await SharedPreferences.getInstance();
+    await _preference.setInt(numberPref, value);
+    _loadNumberPref();
+  }
+
+  Future _setBoolPref(bool value) async {
+    SharedPreferences _preference = await SharedPreferences.getInstance();
+    await _preference.setBool(boolPref, value);
+    _loadBoolPref();
+  }
+
+  void _loadNumberPref() async {
+    SharedPreferences _preference = await SharedPreferences.getInstance();
+    setState(() {
+      _numberPref = _preference.getInt(numberPref) ?? 0;
+    });
+  }
+
+  void _loadBoolPref() async {
+    SharedPreferences _preference = await SharedPreferences.getInstance();
+    setState(() {
+      _booleanPref = _preference.getBool(boolPref) ?? false;
+    });
   }
 }
 
 class ReadWriteFileExample extends StatefulWidget {
-  ReadWriteFileExample({super.key});
+  const ReadWriteFileExample({super.key});
 
   @override
   State<ReadWriteFileExample> createState() => _ReadWriteFileExampleState();
@@ -84,12 +180,12 @@ class _ReadWriteFileExampleState extends State<ReadWriteFileExample> {
               ),
               const Divider(),
             ]),
-            Text(
+            const Text(
               'Local file path:',
               style: TextStyle(fontSize: 32),
             ),
             Text('$_localFilePath'),
-            Text(
+            const Text(
               'Local file content',
               style: TextStyle(fontSize: 32),
             ),
