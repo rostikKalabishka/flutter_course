@@ -36,9 +36,22 @@ class SharedPreferenceExample extends StatefulWidget {
 class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
   static const String numberPref = 'number_pref';
   static const String boolPref = 'bool_pref';
-
+  SharedPreferences? _preference;
   int _numberPref = 0;
   bool _booleanPref = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance()
+      ..then((pref) {
+        setState(() {
+          _preference = pref;
+          _loadNumberPref();
+          _loadBoolPref();
+        });
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +70,7 @@ class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _setNumberPref(_numberPref++);
+                      _setNumberPref(_numberPref + 1);
                     });
                   },
                   child: const Text('Increment'),
@@ -75,8 +88,7 @@ class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _setBoolPref(_booleanPref);
-                      _booleanPref = !_booleanPref;
+                      _setBoolPref(!_booleanPref);
                     });
                   },
                   child: const Text('Toggle'),
@@ -84,7 +96,7 @@ class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
               ],
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: resetData,
               child: const Text('Reset'),
             ),
           ],
@@ -94,29 +106,36 @@ class _SharedPreferenceExampleState extends State<SharedPreferenceExample> {
   }
 
   Future _setNumberPref(int value) async {
-    SharedPreferences _preference = await SharedPreferences.getInstance();
-    await _preference.setInt(numberPref, value);
+    // SharedPreferences _preference = await SharedPreferences.getInstance();
+    await _preference?.setInt(numberPref, value);
     _loadNumberPref();
   }
 
   Future _setBoolPref(bool value) async {
-    SharedPreferences _preference = await SharedPreferences.getInstance();
-    await _preference.setBool(boolPref, value);
+    // SharedPreferences _preference = await SharedPreferences.getInstance();
+    await _preference?.setBool(boolPref, value);
     _loadBoolPref();
   }
 
   void _loadNumberPref() async {
-    SharedPreferences _preference = await SharedPreferences.getInstance();
+    // SharedPreferences _preference = await SharedPreferences.getInstance();
     setState(() {
-      _numberPref = _preference.getInt(numberPref) ?? 0;
+      _numberPref = _preference?.getInt(numberPref) ?? 0;
     });
   }
 
   void _loadBoolPref() async {
-    SharedPreferences _preference = await SharedPreferences.getInstance();
+    // SharedPreferences _preference = await SharedPreferences.getInstance();
     setState(() {
-      _booleanPref = _preference.getBool(boolPref) ?? false;
+      _booleanPref = _preference?.getBool(boolPref) ?? false;
     });
+  }
+
+  void resetData() async {
+    await _preference!.remove(boolPref);
+    await _preference!.remove(numberPref);
+    _loadNumberPref();
+    _loadBoolPref();
   }
 }
 
