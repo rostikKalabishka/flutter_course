@@ -1,8 +1,4 @@
-import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,83 +16,110 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: const AdaptiveAndResponsive());
+        home: ListView(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.network(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ));
   }
 }
 
-class AdaptiveAndResponsive extends StatelessWidget {
-  const AdaptiveAndResponsive({super.key});
+class AspectRatioExample extends StatelessWidget {
+  const AspectRatioExample({super.key});
 
-// AspectRatio
-// CustomSingleChildLayout
-// CustomMultiChildLayout
-// FittedBox
-// FractionallySizedBox
-// LayoutBuilder
-// MediaQuery
-// MediaQueryData
-// OrientationBuilder
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(),
-      body: Center(
-        child: Container(
-          color: Colors.blue,
-          child: CustomMultiChildLayout(
-              delegate: MyMultiChildLayoutDelegate(),
-              children: [
-                LayoutId(
-                  id: 1,
-                  child: Container(
-                    color: Colors.red,
-                    height: 100,
-                    width: 100,
-                  ),
-                ),
-                LayoutId(
-                  id: 2,
-                  child: Container(
-                    color: Colors.pink,
-                    height: 50,
-                    width: 50,
-                  ),
-                ),
-                LayoutId(
-                  id: 3,
-                  child: Container(
-                    color: Colors.red,
-                  ),
-                ),
-                LayoutId(
-                    id: 4,
-                    child: const Text(
-                      'data',
-                      textDirection: TextDirection.ltr,
-                    )),
-              ]),
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Container(
+        color: Colors.pinkAccent,
+        child: Image.network(
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+          fit: BoxFit.cover,
         ),
       ),
     );
   }
 }
 
-class MyMultiChildLayoutDelegate extends MultiChildLayoutDelegate {
-  @override
-  void performLayout(Size size) {
-    final a = hasChild(1);
-    final b = hasChild(2);
-    final c = hasChild(3);
-    final d = hasChild(4);
-    final e = hasChild(5);
-  }
+// class AdaptiveAndResponsive extends StatelessWidget {
+//   const AdaptiveAndResponsive({super.key});
 
-  @override
-  bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) {
-    return true;
-  }
-}
+// // AspectRatio
+// // CustomSingleChildLayout
+// // CustomMultiChildLayout
+// // FittedBox
+// // FractionallySizedBox
+// // LayoutBuilder
+// // MediaQuery
+// // MediaQueryData
+// // OrientationBuilder
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       // appBar: AppBar(),
+//       body: Center(
+//         child: Container(
+//           color: Colors.blue,
+//           child: CustomMultiChildLayout(
+//               delegate: MyMultiChildLayoutDelegate(),
+//               children: [
+//                 LayoutId(
+//                   id: 1,
+//                   child: Container(
+//                     color: Colors.red,
+//                     height: 100,
+//                     width: 100,
+//                   ),
+//                 ),
+//                 LayoutId(
+//                   id: 2,
+//                   child: Container(
+//                     color: Colors.pink,
+//                     height: 50,
+//                     width: 50,
+//                   ),
+//                 ),
+//                 LayoutId(
+//                   id: 3,
+//                   child: Container(
+//                     color: Colors.red,
+//                   ),
+//                 ),
+//                 LayoutId(
+//                     id: 4,
+//                     child: const Text(
+//                       'data',
+//                       textDirection: TextDirection.ltr,
+//                     )),
+//               ]),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class MyMultiChildLayoutDelegate extends MultiChildLayoutDelegate {
+//   @override
+//   void performLayout(Size size) {
+//     final a = hasChild(1);
+//     final b = hasChild(2);
+//     final c = hasChild(3);
+//     final d = hasChild(4);
+//     final e = hasChild(5);
+//   }
+
+//   @override
+//   bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) {
+//     return true;
+//   }
+// }
 
 // class MySingleChildLayoutDelegate extends SingleChildLayoutDelegate {
 //   @override
