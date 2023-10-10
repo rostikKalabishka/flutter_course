@@ -16,36 +16,68 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: ListView(
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ));
+        home: FittedBoxExamole());
   }
 }
 
-class AspectRatioExample extends StatelessWidget {
-  const AspectRatioExample({super.key});
+class FittedBoxExamole extends StatelessWidget {
+  const FittedBoxExamole({super.key});
 
+  @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Container(
-        color: Colors.pinkAccent,
-        child: Image.network(
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
-          fit: BoxFit.cover,
+    return ListView(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Image.network(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+              ),
+            ),
+            Expanded(
+              child: Image.network(
+                'https://cdn.myanimelist.net/r/360x360/images/manga/3/233187.jpg?s=9c194f2c9a5b7a4abdf989202becfbbd',
+              ),
+            ),
+            Flexible(
+              child: Image.network(
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkqMQUL14Iui5B293lL_9Gm16VrE33BKeqJw&usqp=CAU',
+              ),
+            )
+          ],
         ),
-      ),
+      ],
     );
   }
 }
+
+// ListView(
+//           children: [
+//             AspectRatio(
+//               aspectRatio: 16 / 9,
+//               child: Image.network(
+//                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ],
+//         )
+// class AspectRatioExample extends StatelessWidget {
+//   const AspectRatioExample({super.key});
+
+//   Widget build(BuildContext context) {
+//     return AspectRatio(
+//       aspectRatio: 16 / 9,
+//       child: Container(
+//         color: Colors.pinkAccent,
+//         child: Image.network(
+//           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // class AdaptiveAndResponsive extends StatelessWidget {
 //   const AdaptiveAndResponsive({super.key});
