@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_course/responsive.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,40 +17,125 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: FittedBoxExamole());
+        home: LayoutBuilderWidget(
+          mobile: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                // youtube video
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Container(
+                      color: Colors.deepPurple[400],
+                    ),
+                  ),
+                ),
+
+                // comment section & recommended videos
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: 8,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.deepPurple[300],
+                          height: 120,
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          desktop: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                // First column
+                Expanded(
+                  child: Column(
+                    children: [
+                      // youtube video
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: AspectRatio(
+                          aspectRatio: 21 / 9,
+                          child: Expanded(
+                            child: Container(
+                              color: Colors.deepPurple[400],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // comment section & recommended videos
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: 8,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                color: Colors.deepPurple[300],
+                                height: 120,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+                // second column
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: 200,
+                    color: Colors.deepPurple[300],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
 
-class FittedBoxExamole extends StatelessWidget {
-  const FittedBoxExamole({super.key});
+// class FittedBoxExamole extends StatelessWidget {
+//   const FittedBoxExamole({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
-              ),
-            ),
-            Expanded(
-              child: Image.network(
-                'https://cdn.myanimelist.net/r/360x360/images/manga/3/233187.jpg?s=9c194f2c9a5b7a4abdf989202becfbbd',
-              ),
-            ),
-            Flexible(
-              child: Image.network(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkqMQUL14Iui5B293lL_9Gm16VrE33BKeqJw&usqp=CAU',
-              ),
-            )
-          ],
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListView(
+//       children: [
+//         Row(
+//           children: [
+//             Expanded(
+//               child: Image.network(
+//                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZ4IqjSZBEee9lEI7_y-uw8qjzsspX7UPQ&usqp=CAU',
+//               ),
+//             ),
+//             Expanded(
+//               child: Image.network(
+//                 'https://cdn.myanimelist.net/r/360x360/images/manga/3/233187.jpg?s=9c194f2c9a5b7a4abdf989202becfbbd',
+//               ),
+//             ),
+//             Flexible(
+//               child: Image.network(
+//                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkqMQUL14Iui5B293lL_9Gm16VrE33BKeqJw&usqp=CAU',
+//               ),
+//             )
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 // ListView(
 //           children: [
